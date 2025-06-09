@@ -1,0 +1,200 @@
+---
+title: "Research Proposal"
+author: "Heymans, Millah; Lakane, Itumeleng; Neilson, Louis"
+date: "9 July 2025"
+output:
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+# Appendix C and D: Statistical Procedures
+
+## How to Read This Document
+
+This appendix presents the data analysis procedures and outputs for the current study, using the R statistical environment. It has been structured to support transparency, reproducibility, and clarity—particularly for readers who may not be familiar with R or programming.
+
+Each section includes: - A brief explanation of what the analysis step is for, - The actual R code used to perform the analysis, - The resulting outputs, such as tables or graphs, - Interpretive notes to help you understand what the output means and how it informs the research questions.
+
+No prior coding knowledge is required to follow this document. If a result looks unfamiliar, simply refer to the interpretation notes directly below it. All outputs are derived from real or representative data, and the procedures match those described in the proposal under Data Analysis and Reporting.
+
+For a technical audience, this document also serves as a reproducible workflow. For all others, it is intended to demystify how the statistics were conducted and how conclusions were drawn.
+
+> If you are viewing this document as an `.Rmd` (R Markdown) file rather than the knitted HTML version, you will notice code chunks denoted by `{r chunk_name}`. The word `r` specifies the programming language used (R), while the `chunk_name` is a label given by the author for organisational purposes—these names are optional but helpful for debugging and navigating the code.
+
+> If you would like to reuse or adapt the code for your own purposes, you can download the original `.Rmd` file directly from the HTML notebook or request it from the authors.
+
+## Software and Libraries
+
+The analyses in this appendix is conducted using the R programming language (version 4.4.3), a free and open-source environment widely used in psychological and educational research for data analysis and visualisation.
+
+R was selected due to its flexibility, reproducibility, and rich ecosystem for psychological and educational data analysis (Revelle, 2022; Wickham, 2016).
+
+Two main libraries were used: 
+- **`tidyverse`**: A collection of R packages for data manipulation, wrangling, and visualisation, including `dplyr`, `ggplot2`, and `readr`. It supports clean, readable workflows. 
+- **`psych`**: A package specifically designed for psychological data, providing descriptive statistics, correlation procedures, and psychometric functions (Revelle, 2022).
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(psych)
+# Note: message = FALSE and warning = FALSE suppress setup clutter to keep output readable.
+```
+
+## Step 1: Data Import
+
+The dataset used in this study was imported into R from a `.csv` (comma-separated values) file. This file format is commonly used for storing structured data and is compatible with most spreadsheet programs (e.g., Microsoft Excel).
+
+We used the `read.csv()` function to load the data into a data frame—a table-like structure in R that allows for easy manipulation and analysis.
+
+```{r import, eval=FALSE}
+# Replace with your actual file path and filename
+data_frame <- read.csv("filename.csv")
+
+# Note: If the data file is in the same folder as this .Rmd file, only the filename is needed. If it is elsewhere, provide the full file path (e.g., "C:/Users/YourName/Documents/data.csv").
+```
+
+Once loaded, the dataset is stored in the object data_frame, which will be used for all subsequent analysis steps.
+
+We will provide the following simulated data for demonstration purposes, allowing the code that follows to run.
+
+```{r example-data}
+# Set seed for reproducibility
+set.seed(123)
+
+# Simulate a small realistic dataset
+data_frame <- data.frame(
+  AI_usage = round(runif(20, min = 1, max = 5)),  # Random values between 1 and 5
+  academic_self_efficacy = round(rnorm(20, mean = 42, sd = 5)),  # Normal-ish scores
+  general_self_efficacy = round(rnorm(20, mean = 30, sd = 4))
+)
+```
+
+> -   `set.seed(123)` ensures consistent random values across runs.
+> -   `runif()` gives uniformly distributed values for AI usage (like Likert-scale usage frequency).
+> -   `rnorm()` simulates self-efficacy scores with realistic means and SDs.
+
+## Step 2: Descriptive Statistics
+
+Before conducting any inferential statistics, it is important to understand the basic structure of the data. Descriptive statistics help us summarise each variable by providing measures of central tendency (e.g., mean, median), variability (e.g., standard deviation, range), and distribution shape (e.g., skewness, kurtosis).
+
+In this study, we will use the `describe()` function from the `psych` package, which produces a comprehensive summary for each numeric variable in the dataset.
+
+The `describe()` function from the `psych` package will provide the following output:
+
+-   **vars**: Variable number
+-   **n**: Number of observations
+-   **mean**: Mean value
+-   **sd**: Standard deviation
+-   **median**: Median value
+-   **trimmed**: Trimmed mean (mean after removing extreme values)
+-   **mad**: Median absolute deviation
+-   **min/max**: Minimum and maximum values
+-   **range**: Range (max - min)
+-   **skew**: Skewness (asymmetry of distribution)
+-   **kurtosis**: Kurtosis ('peakedness' of distribution)
+-   **se**: Standard error of the mean
+
+```{r descriptives}
+describe(data_frame)
+```
+
+> Interpretation tip: Look at the `mean`, `sd`, `skew`, and `kurtosis` values first, as these give you a quick sense of whether the data is normally distributed, clustered, or contains extreme values. For example, skewness values between -1 and +1 are generally considered acceptable for many statistical tests.
+
+## Step 3: Visual and Statistical Normality Testing
+
+Before choosing an appropriate correlation test, we must determine whether the variables meet the assumption of normality. This step ensures that we select the correct statistical method—either parametric (Pearson’s correlation) or non-parametric (Spearman’s rank correlation).
+
+Two methods were used to assess normality:
+
+1.  **Histogram inspection** to visually assess the distribution shape.
+2.  **Shapiro–Wilk test** to statistically test for normality.
+
+The histogram shows the distribution of scores for a given variable. A roughly symmetrical, bell-shaped histogram suggests normality.
+
+The Shapiro–Wilk test provides a p-value: - If **p \> .05**, we do **not** reject the null hypothesis of normality. - If **p \< .05**, we conclude that the data significantly deviate from a normal distribution.
+
+The output below loops through each variable in the dataset and performs both operations automatically.
+
+```{r normality-loop}
+# Identify all numeric variables
+numeric_vars <- names(data_frame)[sapply(data_frame, is.numeric)]
+
+# Loop through each numeric variable
+for (var in numeric_vars) {
+  cat("\n### Variable:", var, "\n\n")
+  
+  # Plot histogram
+  print(
+    ggplot(data_frame, aes_string(x = var)) +
+      geom_histogram(binwidth = 1, fill = "steelblue", color = "white") +
+      labs(title = paste("Histogram of", var), x = var, y = "Frequency")
+  )
+  
+  # Run Shapiro–Wilk test
+  test_result <- shapiro.test(data_frame[[var]])
+  print(test_result)
+}
+```
+> Interpretation: Check the histogram shape. If it is skewed or has multiple peaks, this suggests non-normality. If the Shapiro–Wilk p-value is less than 0.05, this confirms a significant deviation from normality, and a non-parametric test (Spearman's) should be used instead of Pearson’s correlation.
+
+## Step 4: Correlation Analysis
+
+The aim of this step is to evaluate the strength and direction of the relationships between:
+
+1.  AI usage and **academic self-efficacy**
+2.  AI usage and **general self-efficacy**
+
+Depending on the normality results from Step 3, we will use either:
+
+-   **Pearson’s correlation** (if both variables are normally distributed), or
+-   **Spearman’s rank correlation** (if normality is violated).
+
+Both correlation tests return: - A **correlation coefficient** (r for Pearson or ρ for Spearman), indicating the strength and direction of the relationship. - A **p-value**, indicating whether the relationship is statistically significant (typically, p \< .05 is considered significant).
+
+```{r correlations}
+# Replace variable names with actual column names
+# Academic Self-Efficacy
+cor.test(data_frame$AI_usage, data_frame$academic_self_efficacy, method = "pearson")  # or "spearman"
+
+# General Self-Efficacy
+cor.test(data_frame$AI_usage, data_frame$general_self_efficacy, method = "pearson")  # or "spearman"
+```
+
+> Interpretation: Look at both the size of the correlation (close to ±1 indicates a strong relationship) and the direction (positive or negative). If normality is violated for any variable, interpret the Spearman correlation results. A significant p-value suggests that AI usage is reliably associated with the respective form of self-efficacy.
+
+## Step 5: Steiger’s Z Test for Dependent Correlations
+
+After computing two separate correlations between AI usage and self-efficacy (academic and general), we use **Steiger’s Z test** to determine whether the strength of these two correlations is significantly different.
+
+This is necessary because both correlations share a common variable (AI usage). In such cases, traditional methods like Fisher’s r-to-z transformation are inappropriate because they assume independent correlations. **Steiger’s Z test** accounts for this dependency and is better suited for within-subject comparisons.
+
+The test uses the following correlations:
+
+-   `r.xy`: correlation between AI usage and academic self-efficacy
+-   `r.xz`: correlation between AI usage and general self-efficacy
+-   `r.yz`: correlation between academic and general self-efficacy
+-   `n`: number of observations
+
+```{r steiger-test}
+# Compute necessary correlations
+r12 <- cor(data_frame$AI_usage, data_frame$academic_self_efficacy)
+r13 <- cor(data_frame$AI_usage, data_frame$general_self_efficacy)
+r23 <- cor(data_frame$academic_self_efficacy, data_frame$general_self_efficacy)
+n <- nrow(data_frame)
+
+# Apply Steiger's test for dependent correlations
+paired.r(r12, r13, r23, n)
+```
+
+> Interpretation: The output provides a Z statistic and a p-value. A significant result (p \< .05) indicates that the strength of the relationship between AI usage and academic self-efficacy is significantly different from the strength of the relationship between AI usage and general self-efficacy.
+
+# Conclusion
+
+This appendix has presented the full analytical workflow used to address the study’s research questions, including both the rationale behind statistical choices (Appendix C) and the specific R code and outputs used to carry out these procedures (Appendix D).
+
+By combining narrative explanation with reproducible code, this document is intended to promote transparency, replicability, and accessibility for a range of readers, including those less familiar with R or statistical programming. All analytical decisions were made in accordance with best practices for psychological research and tailored to the study's post-positivist paradigm.
+
+Readers wishing to replicate or audit these analyses may refer directly to the code blocks and outputs above. If the study is accepted and proceeds to data collection, this workflow will be re-run using the final dataset and adapted as necessary based on observed data characteristics.
+
+> **Note for readers and reviewers:**\
+> This document was generated using R Markdown. If you wish to adapt or re-run any part of the analysis, the original `.Rmd` source file is available for download from the HTML output or upon request. Code chunks in the `.Rmd` file are written in R, with chunk names (e.g., `{r descriptives}`) used for clarity and debugging only—they do not affect the output.
