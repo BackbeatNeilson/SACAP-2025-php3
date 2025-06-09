@@ -48,7 +48,7 @@ Clone the repo or download the `.Rmd` file. To execute the document, you'll need
 
 If referencing or adapting this work in an academic or educational context, please cite:
 
-> Heymans, M., Lakane, I., & Neilson, L. (2025). *AI Usage and Self-Efficacy in Undergraduate Students: Statistical Appendices C & D*. GitHub Repository. [https://github.com/yourusername/reponame](https://github.com/yourusername/reponame)
+> Heymans, M., Lakane, I., & Neilson, L. (2025). *AI Usage and Self-Efficacy in Undergraduate Students: Statistical Appendices C & D*. GitHub Repository. [https://github.com/BackbeatNeilson/SACAP-2025-php3](https://github.com/BackbeatNeilson/SACAP-2025-php3)
 
 ---
 
