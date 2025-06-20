@@ -1,4 +1,4 @@
-# 📘 Appendices C & D: Statistical Procedures and Outputs
+# 📘 Appendix F: Statistical Procedures and Outputs
 
 This repository accompanies a research proposal investigating the relationship between AI usage and self-efficacy in undergraduate students.
 
