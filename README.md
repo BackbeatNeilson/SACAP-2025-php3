@@ -4,8 +4,8 @@ This repository accompanies a research proposal investigating the relationship b
 
 It contains:
 
-- `AI-Usage-and-Self-efficacy.Rmd` – A fully annotated R Markdown source file that outlines the data analysis workflow proposed in the study.
-- `AI-Usage-and-Self-efficacy.html` – An interactive HTML notebook version for easier reading and demonstration.
+- `AI-Usage-and-Self-efficacy.Rmd` – A fully annotated R Markdown source file that outlines the data analysis workflow proposed in the study. That file can be accessed by selecting the following link [AI-Usage-and-Self-efficacy.Rmd – annotated R Markdown source](https://backbeatneilson.github.io/SACAP-2025-php3/AI%20Usage%20and%20Self-efficacy.Rmd)
+- `AI-Usage-and-Self-efficacy.html` – An interactive HTML notebook version for easier reading and demonstration. That file can be accessed by selecting the following link [AI-Usage-and-Self-efficacy.html](AI-Usage-and-Self-efficacy.html)
 
 ---
 
@@ -13,8 +13,9 @@ It contains:
 
 These files serve as:
 
-- **Appendix C**: Detailed methodological descriptions of the statistical procedures proposed in the study.
-- **Appendix D**: The complete R code syntax and demonstrative outputs that support methodological transparency.
+### Appendix F:
+- Detailed methodological descriptions of the statistical procedures proposed in the study.
+- The complete R code syntax and demonstrative outputs that support methodological transparency.
 
 Together, they support reproducibility, clarify statistical methods, and provide interpretation scaffolding for both technical and non-technical reviewers.
 
@@ -67,3 +68,11 @@ You are free to:
 - **NonCommercial** — You may not use the material for commercial purposes.
 
 > For uses outside these terms, please contact the repository authors.
+
+---
+### 📣 Accessibility
+
+We strive to ensure that this page meets [WCAG 2.1 accessibility standards](https://www.w3.org/WAI/WCAG21/quickref/).  
+If you encounter any accessibility barriers, please contact the authors so we can address them promptly.
+contact [us](mailto:389703@student.sacap.edu.za)
+
